@@ -6,6 +6,7 @@ Usage:
   python main.py triage <sample>   one sample's triage row
   python main.py detonate <sample> one sample's full threat report (markdown)
   python main.py serve [port]      run the HTTP API (default 8771)
+  python main.py fleet             run the merged fleet chamber over its payload set
   python main.py checks            self-checks
   python main.py hold-demo         show a HOLD verdict (exit 2)
 """
@@ -25,7 +26,7 @@ def checks() -> list[tuple[str, bool, str]]:
     def check(name: str, cond: bool, detail: str = "") -> None:
         out.append((name, bool(cond), detail))
 
-    check("version", __version__ == "1.0.0", __version__)
+    check("version", __version__ == "1.1.0", __version__)
     rows = [chamber.triage(s) for s in samples.SAMPLES]
     check("12 samples", len(rows) == 12)
     check("triage 8 allow / 4 hold",
@@ -55,6 +56,17 @@ def checks() -> list[tuple[str, bool, str]]:
     check("markdown renders", "Threat report" in report.render_markdown(rep2))
     check("council 4 seats", len(rep2["council"]["seats"]) == 4)
     check("council HOLD execute", council.decide("execute_payload")["verdict"] == "HOLD")
+    import hashlib as _h
+    from sandboxapi import payloads as _pl
+    module_bytes = open("sandboxapi/sandbox_api.py", "rb").read()
+    check("fleet chamber verbatim (canonical sha256)",
+          _h.sha256(module_bytes).hexdigest()
+          == "28b3365c0466027079a4985520840f6532d7d9a0c5b4239b840e561f06de54b0")
+    fleet = _pl.run_chamber()
+    check("fleet chamber 7 -> 4 allowed / 3 held",
+          fleet["total"] == 7 and fleet["allowed"] == 4 and fleet["held"] == 3)
+    check("fleet telemetry invariants",
+          fleet["all_executed"] is False and fleet["total_network_attempts"] == 0)
     check("council HOLD egress", council.decide("network_egress")["verdict"] == "HOLD")
     check("council PROCEED report", council.decide("build_report")["verdict"] == "PROCEED")
     from sandboxapi import server as srv
@@ -112,6 +124,10 @@ def main(argv: list[str]) -> int:
             server.serve_forever()
         except KeyboardInterrupt:
             pass
+        return 0
+    if cmd == "fleet":
+        from sandboxapi import payloads as pl
+        print(json.dumps(pl.run_chamber(), indent=2))
         return 0
     if cmd == "hold-demo":
         verdict = council.decide("execute_payload")

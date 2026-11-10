@@ -13,5 +13,5 @@ network calls are always 0. Detonation in this build is a static
 prediction, labelled SIMULATED everywhere it appears.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __all__ = ["__version__"]

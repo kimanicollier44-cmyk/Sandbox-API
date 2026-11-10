@@ -60,3 +60,17 @@ def test_api_roundtrip():
         assert "203.0.113.66" in rep["iocs"]["ips"]
     finally:
         server.shutdown()
+
+
+def test_fleet_chamber_verbatim():
+    import hashlib
+    digest = hashlib.sha256(open("sandboxapi/sandbox_api.py", "rb").read()).hexdigest()
+    assert digest == "28b3365c0466027079a4985520840f6532d7d9a0c5b4239b840e561f06de54b0"
+
+
+def test_fleet_chamber_run():
+    from sandboxapi import payloads
+    result = payloads.run_chamber()
+    assert result["total"] == 7 and result["allowed"] == 4 and result["held"] == 3
+    assert result["all_executed"] is False
+    assert result["total_network_attempts"] == 0

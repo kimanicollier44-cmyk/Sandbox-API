@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.1.0 - 2026-11-10
+
+- MERGE: the fleet chamber came home. sandboxapi/sandbox_api.py is
+  the canonical chamber copied VERBATIM (sha256 28b3365c...) from
+  MonadDB-RE - the same file Q6G-1TB, LTE-6G and A-C-D-Matrix-FORCE
+  carry - now living in the sandbox-api home repo, with a provenance
+  check in the test suite and self-checks so it can never drift
+  silently. Its payloads seat (sandboxapi/payloads.py) triages 7
+  payloads -> 4 ALLOW_STATIC_STUDY / 3 HOLD_IN_CHAMBER, executed
+  False, network attempts 0. New CLI: python main.py fleet.
+- Verified: pytest 8 passed, CHECKS 22/22.
+
 ## 1.0.0 - 2026-11-10
 
 - First source release for credkellar/sandbox-api (the Docker Hub

@@ -2,14 +2,14 @@
 
 **💥 The source repository for `credkellar/sandbox-api` (8,500+ Docker Hub pulls): safely study suspicious payloads across PC, mobile and cloud environments — static triage, predicted detonation telemetry, IOC extraction, threat scoring, and a four-LLM council that synthesizes the report. Nothing is ever executed.**
 
-👨‍💻 By Darion Kellar · 📜 MIT License · 🐍 Python stdlib only, zero dependencies · 🏷️ v1.0.0
+👨‍💻 By Darion Kellar · 📜 MIT License · 🐍 Python stdlib only, zero dependencies · 🏷️ v1.1.0
 
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green)
 ![Dependencies](https://img.shields.io/badge/dependencies-zero-brightgreen)
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![Tests](https://img.shields.io/badge/tests-6%20passed-brightgreen)
-![Checks](https://img.shields.io/badge/checks-19%2F19-brightgreen)
+![Version](https://img.shields.io/badge/version-1.1.0-blue)
+![Tests](https://img.shields.io/badge/tests-8%20passed-brightgreen)
+![Checks](https://img.shields.io/badge/checks-22%2F22-brightgreen)
 ![Docker Pulls](https://img.shields.io/docker/pulls/credkellar/sandbox-api?logo=docker&label=Docker%20Hub%20pulls)
 ![Executed](https://img.shields.io/badge/executed-always%20false-red)
 ![Council](https://img.shields.io/badge/council-4%20LLM%20seats-purple)
@@ -106,7 +106,7 @@ Most sandboxes ask you to trust a black box. This one shows its work: every scor
 2. 📂 Enter it: `cd Sandbox-API`
 3. 🐍 Check Python: `python3 --version` (3.10+; developed on 3.12).
 4. 🧪 (Optional, for tests) Install pytest: `pip install pytest`
-5. ✅ Run the self-checks: `python main.py checks` → expect **CHECKS: 19/19 passed**.
+5. ✅ Run the self-checks: `python main.py checks` → expect **CHECKS: 22/22 passed**.
 6. 🧫 Run the demo: `python main.py demo`
 7. 📝 Read one full report: `python main.py detonate auto-updater`
 8. 🌐 Start the API: `python main.py serve 8771` → `curl -X POST localhost:8771/detonate -d '{"name":"x","kind":"python","content":"print(1)"}'`
@@ -133,6 +133,8 @@ Sandbox-API/
 ├── Dockerfile               # 🐳 serves the API on :8771
 ├── sandboxapi/
 │   ├── chamber.py           # 🧪 static triage (markers, sha256, entropy)
+│   ├── sandbox_api.py       # 🏠 the fleet chamber, VERBATIM (sha256 28b3365c…)
+│   ├── payloads.py          # 🎯 fleet-chamber payload triage (7 → 4/3)
 │   ├── samples.py           # 🧫 12 synthetic payload descriptors
 │   ├── detonate.py          # 💥 simulated detonation, 3 profiles
 │   ├── iocs.py              # 🕵️ static IOC extraction
@@ -153,7 +155,7 @@ flowchart TD
     B -->|demo| C["Sample set: triage + scores"]
     B -->|detonate| D["Full threat report"]
     B -->|serve| E["HTTP API on :8771"]
-    B -->|checks| F["19 self-checks"]
+    B -->|checks| F["22 self-checks"]
 ```
 
 ### 📄 `sandboxapi/chamber.py`
@@ -258,6 +260,31 @@ flowchart TD
     E["10 HOLD action classes"] --> B
 ```
 
+## 🏠 The fleet chamber, merged home (v1.1.0)
+
+One module in this repo has a long travel history: the static chamber Darion first built into **MonadDB-RE** was copied *verbatim* into Q6G-1TB, LTE-6G and A-C-D-Matrix-FORCE — every copy byte-identical, sha256 `28b3365c0466027079a4985520840f6532d7d9a0c5b4239b840e561f06de54b0`. Its own docstring used to say "no public source repo exists for sandbox-api." Now it lives **here**, in its home repo, as `sandboxapi/sandbox_api.py` — still verbatim, with a provenance test and a self-check that hash the file on every run so it can never drift silently. Its triage seat (`sandboxapi/payloads.py`) runs 7 payloads through fresh chambers: **4 ALLOW_STATIC_STUDY / 3 HOLD_IN_CHAMBER**, executed always False, network attempts always 0. Try it: `python main.py fleet`.
+
+### 📄 `sandboxapi/sandbox_api.py` (fleet chamber, verbatim)
+
+```mermaid
+flowchart TD
+    A["Payload bytes"] --> B["Fresh Chamber: isolated temp dir"]
+    B --> C["Write sample as DATA"]
+    C --> D["Static analyse_fn runs"]
+    D --> E["Telemetry: trace, FS diff, steps, budgets"]
+    E --> F["network_attempts = 0, executed = False"]
+```
+
+### 📄 `sandboxapi/payloads.py`
+
+```mermaid
+flowchart LR
+    A["7 payloads"] --> B["detonate_static per payload"]
+    B --> C{"Danger markers?"}
+    C -->|none| D["ALLOW_STATIC_STUDY x4"]
+    C -->|eval / socket / shell| E["HOLD_IN_CHAMBER x3"]
+```
+
 ## 🚦 HOLD gates (10)
 
 | # | Action on HOLD | Why |
@@ -275,7 +302,7 @@ flowchart TD
 
 ## 🧪 Demo (observed)
 
-12 samples triaged: **8 ALLOW / 4 HOLD**. Threat table: eval-loader **85 CRITICAL**, reverse-shell **65 HIGH**, ransom-note **55 HIGH**, key-listener **40 MEDIUM**, the rest LOW/CLEAN. The API round-trip is covered by tests (live `/detonate` on an ephemeral port). Verification: **pytest 6 passed, CHECKS 19/19, hold-demo exit 2**.
+12 samples triaged: **8 ALLOW / 4 HOLD**. Threat table: eval-loader **85 CRITICAL**, reverse-shell **65 HIGH**, ransom-note **55 HIGH**, key-listener **40 MEDIUM**, the rest LOW/CLEAN. The API round-trip is covered by tests (live `/detonate` on an ephemeral port). Verification: **pytest 8 passed, CHECKS 22/22, hold-demo exit 2**.
 
 ## ⚖️ Honest status
 
