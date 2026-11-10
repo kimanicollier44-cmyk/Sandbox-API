@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sandboxapi"
+version = "1.0.0"
+description = "sandbox-api: cross-platform payload detonation chamber (static + simulated) with multi-LLM threat reports"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Darion Kellar" }]
+
+[tool.setuptools.packages.find]
+include = ["sandboxapi*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
