@@ -1,3 +1,5 @@
+![Sandbox-API Cover](assets/cover.png)
+
 # 🧪 Sandbox-API — Cross-Platform Detonation Chamber & Threat Reports
 
 **💥 The source repository for `credkellar/sandbox-api` (8,500+ Docker Hub pulls): safely study suspicious payloads across PC, mobile and cloud environments — static triage, predicted detonation telemetry, IOC extraction, threat scoring, and a four-LLM council that synthesizes the report. Nothing is ever executed.**
